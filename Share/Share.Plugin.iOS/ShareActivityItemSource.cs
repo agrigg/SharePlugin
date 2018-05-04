@@ -19,7 +19,7 @@ namespace Plugin.Share
 
         public override NSObject GetItemForActivity(UIActivityViewController activityViewController, NSString activityType)
         {
-            if (activityType != null && activityType.Contains("instagram"))
+            if (activityType != null && activityType.Contains(new NSString("instagram")))
             {
                 return null;
             }
@@ -34,7 +34,7 @@ namespace Plugin.Share
 
         public override string GetSubjectForActivity(UIActivityViewController activityViewController, NSString activityType)
         {
-            if (activityType != null && activityType.Contains("instagram"))
+            if (activityType != null && activityType.Contains(new NSString("instagram")))
             {
                 return null;
             }
