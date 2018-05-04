@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
+using Xamarin.Forms.Platform.iOS;
 
 namespace Plugin.Share
 {
@@ -107,6 +108,13 @@ namespace Plugin.Share
                     items.Add(new ShareActivityItemSource(new NSString(message.Text), message.Title));
                 if (message.Url != null)
                     items.Add(new ShareActivityItemSource(NSUrl.FromString(message.Url), message.Title));
+                if(message.Image != null){
+                    var handler = new ImageLoaderSourceHandler();
+
+                    var uiImage = await handler.LoadImageAsync(message.Image);
+
+                    items.Add(new ShareActivityItemSource(uiImage, message.Title));
+                }
 
                 // create activity controller
                 var activityController = new UIActivityViewController(items.ToArray(), null);

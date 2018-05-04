@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace Plugin.Share.Abstractions
 {
@@ -25,5 +27,10 @@ namespace Plugin.Share.Abstractions
         /// Gets or sets the link to include with the message.
         /// </summary>
         public string Url { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image stream to include with the message
+        /// </summary>
+        public ImageSource Image { get; set; }
     }
 }

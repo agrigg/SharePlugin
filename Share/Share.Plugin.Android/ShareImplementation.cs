@@ -1,11 +1,13 @@
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.Support.CustomTabs;
 using Plugin.CurrentActivity;
 using Plugin.Share.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Xamarin.Forms.Platform.Android;
 
 namespace Plugin.Share
 {
@@ -65,7 +67,7 @@ namespace Plugin.Share
         /// <param name="message">Message to share</param>
         /// <param name="options">Platform specific options</param>
         /// <returns>True if the operation was successful, false otherwise</returns>
-        public Task<bool> Share(ShareMessage message, ShareOptions options = null)
+        public async Task<bool> Share(ShareMessage message, ShareOptions options = null)
         {
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
@@ -79,22 +81,43 @@ namespace Plugin.Share
                     items.Add(message.Url);
 
                 var intent = new Intent(Intent.ActionSend);
-                intent.SetType("text/plain");
+
                 intent.PutExtra(Intent.ExtraText, string.Join(Environment.NewLine, items));
+
                 if (message.Title != null)
                     intent.PutExtra(Intent.ExtraSubject, message.Title);
+
+                if(message.Image != null){
+                    var handler = new ImageLoaderSourceHandler();
+                    var bitmap = await handler.LoadImageAsync(message.Image, Android.App.Application.Context);
+
+                    var path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads
+                                                                                        + Java.IO.File.Separator + Guid.NewGuid().ToString() + ".png");
+
+                    using (var os = new System.IO.FileStream(path.AbsolutePath, System.IO.FileMode.Create))
+                    {
+                        bitmap.Compress(Bitmap.CompressFormat.Png, 100, os);
+                    }
+
+					intent.SetType("image/*");
+					intent.SetFlags(ActivityFlags.GrantReadUriPermission);
+                    intent.PutExtra(Intent.ExtraStream, Android.Net.Uri.FromFile(path));
+                }
+                else {
+                    intent.SetType("text/plain");
+                }
 
                 var chooserIntent = Intent.CreateChooser(intent, options?.ChooserTitle);
                 chooserIntent.SetFlags(ActivityFlags.ClearTop);
                 chooserIntent.SetFlags(ActivityFlags.NewTask);
                 Application.Context.StartActivity(chooserIntent);
 
-                return Task.FromResult(true);
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Unable to share: " + ex.Message);
-                return Task.FromResult(false);
+                return false;
             }
         }
 
