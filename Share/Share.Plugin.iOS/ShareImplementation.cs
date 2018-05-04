@@ -113,7 +113,7 @@ namespace Plugin.Share
 
                     var uiImage = await handler.LoadImageAsync(message.Image);
 
-                    items.Add(new ShareActivityItemSource(uiImage, message.Title));
+                    items.Add(NSObject.FromObject(uiImage));
                 }
 
                 // create activity controller
