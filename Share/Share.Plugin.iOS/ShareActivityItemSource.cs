@@ -29,7 +29,7 @@ namespace Plugin.Share
 
         public override NSObject GetPlaceholderData(UIActivityViewController activityViewController)
         {
-            return item;
+            return new NSObject();
         }
 
         public override string GetSubjectForActivity(UIActivityViewController activityViewController, NSString activityType)
